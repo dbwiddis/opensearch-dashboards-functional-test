@@ -13,7 +13,10 @@ export const selectTopItemFromFilter = (
     .find('[data-test-subj=comboBoxToggleListButton]')
     .click({ force: true });
 
-  cy.get('.euiFilterSelectItem').first().click();
+  // Wait for and click the first option - try multiple possible selectors
+  cy.get('.euiFilterSelectItem, .euiComboBoxOption__content, .ouiFilterSelectItem, .ouiComboBoxOption__content', { timeout: 60000 })
+    .first()
+    .click();
   cy.wait(1000);
 
   // If multiple options can be selected, the combo box doesn't close after selecting an option.
