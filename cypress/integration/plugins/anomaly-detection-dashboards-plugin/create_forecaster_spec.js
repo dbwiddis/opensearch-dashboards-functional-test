@@ -42,8 +42,13 @@ context('create forecaster workflow', () => {
           }
         }
       }),
+    }).then((response) => {
+      expect(response.status).to.eq(200);
     });
-    
+
+    // Wait for index to be ready
+    cy.wait(1000);
+
     // reuse AD sample data
     // Loads a text file containing sample test data from cypress/fixtures/[AD_FIXTURE_BASE_PATH]/sample_test_data.txt
     cy.fixture(AD_FIXTURE_BASE_PATH + 'sample_test_data.txt').then((data) => {

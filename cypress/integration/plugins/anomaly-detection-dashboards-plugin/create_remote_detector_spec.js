@@ -48,7 +48,7 @@ context('Create remote detector workflow', () => {
           Cypress.log({
             message: 'Remote cluster is unavailable — skipping tests',
           });
-          suite.skip();
+          return suite.skip();
         }
       });
 
@@ -60,7 +60,7 @@ context('Create remote detector workflow', () => {
         });
         if (!response.body || !response.body.cluster_name) {
           Cypress.log({ message: 'Cluster name not found - skipping tests' });
-          suite.skip();
+          return suite.skip();
         }
         Cypress.env('remoteClusterName', response.body.cluster_name);
         remoteClusterName = response.body.cluster_name;
