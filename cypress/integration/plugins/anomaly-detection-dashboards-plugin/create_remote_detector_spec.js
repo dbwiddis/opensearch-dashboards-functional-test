@@ -29,6 +29,7 @@ context('Create remote detector workflow', () => {
     ? `-u ${REMOTE_DATA_SOURCE_USERNAME}:${REMOTE_DATA_SOURCE_PASSWORD}`
     : '';
   const insecureOption = isSecure ? '--insecure' : '';
+  let skipTests = false;
 
   //Clean up created resources
   afterEach(() => {
@@ -38,7 +39,6 @@ context('Create remote detector workflow', () => {
 
   describe('Remote cluster tests', () => {
     before(function () {
-      const suite = this;
       cy.visit(AD_URL.OVERVIEW, { timeout: 10000 });
       cy.exec(
         `curl --silent --max-time 5 ${insecureOption} ${auth} ${remoteBaseUrl}/_cluster/health`,
@@ -48,19 +48,25 @@ context('Create remote detector workflow', () => {
           Cypress.log({
             message: 'Remote cluster is unavailable — skipping tests',
           });
-          return suite.skip();
+          skipTests = true;
         }
       });
 
       let remoteClusterName = 'opensearch';
       // make a cluster health call to get the remote cluster name
-      cy.request('GET', `${remoteBaseUrl}/_cluster/health`).then((response) => {
+      cy.request({
+        method: 'GET',
+        url: `${remoteBaseUrl}/_cluster/health`,
+        failOnStatusCode: false,
+      }).then((response) => {
+        if (skipTests) return;
         Cypress.log({
           message: `Cluster health response: ${JSON.stringify(response.body)}`,
         });
         if (!response.body || !response.body.cluster_name) {
           Cypress.log({ message: 'Cluster name not found - skipping tests' });
-          return suite.skip();
+          skipTests = true;
+          return;
         }
         Cypress.env('remoteClusterName', response.body.cluster_name);
         remoteClusterName = response.body.cluster_name;
@@ -122,7 +128,10 @@ context('Create remote detector workflow', () => {
     });
 
     // Index some sample data in local and follower cluster (remote)
-    beforeEach(() => {
+    beforeEach(function () {
+      if (skipTests) {
+        this.skip();
+      }
       cy.visit(AD_URL.OVERVIEW, { timeout: 10000 });
       cy.deleteAllIndices();
       cy.deleteADSystemIndices();

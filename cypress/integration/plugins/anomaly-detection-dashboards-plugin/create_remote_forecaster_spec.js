@@ -28,6 +28,7 @@ const auth = isSecure
   ? `-u ${REMOTE_DATA_SOURCE_USERNAME}:${REMOTE_DATA_SOURCE_PASSWORD}`
   : '';
 const insecureOption = isSecure ? '--insecure' : '';
+let skipTests = false;
 
 const setAbsoluteStartDate = (startDate) => {
   cy.getElementByTestId('superDatePickerShowDatesButton').click();
@@ -51,7 +52,6 @@ context('Create remote forecaster workflow', () => {
 
   describe('Remote cluster tests', () => {
     before(function () {
-      const suite = this;
       cy.exec(
         `curl --silent --max-time 5 ${insecureOption} ${auth} ${remoteBaseUrl}/_cluster/health`,
         { failOnNonZeroExit: false }
@@ -60,18 +60,24 @@ context('Create remote forecaster workflow', () => {
           Cypress.log({
             message: 'Remote cluster is unavailable — skipping tests',
           });
-          return suite.skip();
+          skipTests = true;
         }
       });
 
       let remoteClusterName = 'opensearch';
-      cy.request('GET', `${remoteBaseUrl}/_cluster/health`).then((response) => {
+      cy.request({
+        method: 'GET',
+        url: `${remoteBaseUrl}/_cluster/health`,
+        failOnStatusCode: false,
+      }).then((response) => {
+        if (skipTests) return;
         Cypress.log({
           message: `Cluster health response: ${JSON.stringify(response.body)}`,
         });
         if (!response.body || !response.body.cluster_name) {
           Cypress.log({ message: 'Cluster name not found - skipping tests' });
-          return suite.skip();
+          skipTests = true;
+          return;
         }
         Cypress.env('remoteClusterName', response.body.cluster_name);
         remoteClusterName = response.body.cluster_name;
@@ -111,7 +117,10 @@ context('Create remote forecaster workflow', () => {
       });
     });
 
-    beforeEach(() => {
+    beforeEach(function () {
+      if (skipTests) {
+        this.skip();
+      }
       cy.deleteAllIndices();
       cy.deleteForecastIndices();
       cy.deleteAllRemoteIndices();
