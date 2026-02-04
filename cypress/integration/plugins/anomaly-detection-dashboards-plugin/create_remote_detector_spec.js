@@ -38,6 +38,7 @@ context('Create remote detector workflow', () => {
 
   describe('Remote cluster tests', () => {
     before(function () {
+      const suite = this;
       cy.visit(AD_URL.OVERVIEW, { timeout: 10000 });
       cy.exec(
         `curl --silent --max-time 5 ${insecureOption} ${auth} ${remoteBaseUrl}/_cluster/health`,
@@ -47,7 +48,7 @@ context('Create remote detector workflow', () => {
           Cypress.log({
             message: 'Remote cluster is unavailable — skipping tests',
           });
-          this.skip();
+          suite.skip();
         }
       });
 
@@ -59,7 +60,7 @@ context('Create remote detector workflow', () => {
         });
         if (!response.body || !response.body.cluster_name) {
           Cypress.log({ message: 'Cluster name not found - skipping tests' });
-          this.skip();
+          suite.skip();
         }
         Cypress.env('remoteClusterName', response.body.cluster_name);
         remoteClusterName = response.body.cluster_name;
