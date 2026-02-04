@@ -20,6 +20,30 @@ context('create forecaster workflow', () => {
 
     cy.deleteAllIndices();
     cy.deleteForecastIndices();
+    
+    // Create index with explicit mapping for timestamp field
+    cy.request({
+      method: 'POST',
+      form: false,
+      url: 'api/console/proxy',
+      headers: {
+        'content-type': 'application/json;charset=UTF-8',
+        'osd-xsrf': true,
+      },
+      qs: {
+        path: `${TEST_INDEX_NAME}`,
+        method: 'PUT',
+      },
+      body: JSON.stringify({
+        mappings: {
+          properties: {
+            timestamp: { type: 'date', format: 'yyyy-MM-dd' },
+            value: { type: 'integer' }
+          }
+        }
+      }),
+    });
+    
     // reuse AD sample data
     // Loads a text file containing sample test data from cypress/fixtures/[AD_FIXTURE_BASE_PATH]/sample_test_data.txt
     cy.fixture(AD_FIXTURE_BASE_PATH + 'sample_test_data.txt').then((data) => {
