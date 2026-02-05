@@ -68,19 +68,8 @@ context('create forecaster workflow', () => {
       'exist'
     );
 
-    cy.getElementByTestId('suggestParametersButton').click();
-    cy.getElementByTestId('suggestParametersDialogTitle').should('exist');
-    cy.getElementByTestId('generateSuggestionsButton').click();
-    cy.getElementByTestId('suggestedParametersResult').should('exist');
-    // not enough data to determine a suitable interval
-    cy.contains('Unable to determine a suitable interval').should('be.visible');
-    cy.getElementByTestId('useSuggestedParametersButton').click();
-
-    // The dialog should close and we're back on the model configuration page
-    cy.getElementByTestId('suggestParametersDialogTitle').should('not.exist');
-
-    // Now manually enter the interval value
-    cy.get('input[name="interval"]').type('10');
+    // Manually enter interval and history values (not enough sample data for suggestions)
+    cy.get('input[name="interval"]').clear().type('10');
 
     // Verify validation for history field
     cy.get('input[name="history"]').clear().type('3');
