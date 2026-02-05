@@ -52,8 +52,9 @@ context('create forecaster workflow', () => {
       TEST_FORECASTER_DESCRIPTION
     );
     cy.getElementByTestId('indicesFilter').click().type(`${TEST_INDEX_NAME}{enter}`, { delay: 100 });
-    cy.wait(1000);
-    selectTopItemFromFilter('timestampFilter', false);
+    cy.wait(2000);
+    // Type timestamp field directly instead of selecting from dropdown
+    cy.getElementByTestId('timestampFilter').type('timestamp{enter}');
 
     cy.getElementByTestId('featureNameTextInput-0').type(
       TEST_FIELD_TO_FORECAST
