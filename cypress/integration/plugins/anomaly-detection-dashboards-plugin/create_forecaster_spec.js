@@ -59,7 +59,8 @@ context('create forecaster workflow', () => {
     cy.getElementByTestId('featureNameTextInput-0').type(
       TEST_FIELD_TO_FORECAST
     );
-    selectTopItemFromFilter('featureFieldTextInput-0', false);
+    // Type feature field directly instead of selecting from dropdown
+    cy.getElementByTestId('featureFieldTextInput-0').type('value{enter}');
 
     cy.getElementByTestId('defineForecasterNextButton').click();
     cy.getElementByTestId('defineOrEditForecasterTitle').should('not.exist');
