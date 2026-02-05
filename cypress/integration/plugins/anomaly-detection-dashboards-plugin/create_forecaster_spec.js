@@ -52,16 +52,21 @@ context('create forecaster workflow', () => {
     cy.getElementByTestId('forecasterDescriptionTextInput').type(
       TEST_FORECASTER_DESCRIPTION
     );
-    cy.getElementByTestId('indicesFilter').type(`${TEST_INDEX_NAME}{enter}`);
+    cy.getElementByTestId('indicesFilter').type(TEST_INDEX_NAME);
+    cy.wait(1000);
+    // Click on the index option from dropdown instead of using {enter}
+    cy.get('.euiComboBoxOption__content, .ouiComboBoxOption__content')
+      .contains(TEST_INDEX_NAME)
+      .click();
     
-    // Wait for timestamp options to be populated after index selection
+    // Wait for mappings to load after index selection
+    cy.wait(2000);
+    
+    // Now select timestamp
     cy.getElementByTestId('timestampFilter')
       .find('[data-test-subj=comboBoxToggleListButton]')
       .click({ force: true });
     cy.get('.euiComboBoxOption__content, .ouiComboBoxOption__content', { timeout: 30000 })
-      .should('exist');
-    // Select the first option
-    cy.get('.euiComboBoxOption__content, .ouiComboBoxOption__content')
       .first()
       .click();
 
