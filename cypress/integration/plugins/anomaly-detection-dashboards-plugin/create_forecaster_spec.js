@@ -14,6 +14,7 @@ context('create forecaster workflow', () => {
 
   // Index some sample data first
   beforeEach(() => {
+    cy.visit(FORECAST_URL.CREATE_FORECASTER, { timeout: 10000 });
     cy.deleteAllIndices();
     cy.deleteForecastIndices();
 
@@ -50,23 +51,9 @@ context('create forecaster workflow', () => {
     cy.getElementByTestId('forecasterDescriptionTextInput').type(
       TEST_FORECASTER_DESCRIPTION
     );
-    cy.getElementByTestId('indicesFilter').type(TEST_INDEX_NAME);
+    cy.getElementByTestId('indicesFilter').click().type(`${TEST_INDEX_NAME}{enter}`, { delay: 100 });
     cy.wait(1000);
-    // Click on the index option from dropdown instead of using {enter}
-    cy.get('.euiComboBoxOption__content, .ouiComboBoxOption__content')
-      .contains(TEST_INDEX_NAME)
-      .click();
-    
-    // Wait for mappings to load after index selection
-    cy.wait(2000);
-    
-    // Now select timestamp
-    cy.getElementByTestId('timestampFilter')
-      .find('[data-test-subj=comboBoxToggleListButton]')
-      .click({ force: true });
-    cy.get('.euiComboBoxOption__content, .ouiComboBoxOption__content', { timeout: 30000 })
-      .first()
-      .click();
+    selectTopItemFromFilter('timestampFilter', false);
 
     cy.getElementByTestId('featureNameTextInput-0').type(
       TEST_FIELD_TO_FORECAST
