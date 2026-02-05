@@ -57,11 +57,11 @@ context('create forecaster workflow', () => {
     cy.getElementByTestId('indicesFilter').click();
     cy.getElementByTestId('indicesFilter').type(`${TEST_INDEX_NAME}{enter}`);
 
-    // pick the real dropdown option
     cy.contains('.euiComboBoxOption__content', TEST_INDEX_NAME).click();
 
-    // small wait for field list to fetch/populate
-    cy.wait(500);
+    cy.getElementByTestId('timestampFilter')
+      .should('be.visible')
+      .should('not.be.disabled');
 
     selectTopItemFromFilter('timestampFilter', false);
 
