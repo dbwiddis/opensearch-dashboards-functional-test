@@ -118,9 +118,7 @@ context('Create remote forecaster workflow', () => {
     });
 
     beforeEach(function () {
-      if (skipTests) {
-        this.skip();
-      }
+      if (skipTests) return;
       cy.deleteAllIndices();
       cy.deleteForecastIndices();
       cy.deleteAllRemoteIndices();
@@ -209,7 +207,8 @@ context('Create remote forecaster workflow', () => {
       );
     });
 
-    it('Full creation - based on remote index', () => {
+    it('Full creation - based on remote index', function () {
+      if (skipTests) return;
       const remoteClusterName = Cypress.env('remoteClusterName');
 
       // Define forecaster step

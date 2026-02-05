@@ -129,9 +129,7 @@ context('Create remote detector workflow', () => {
 
     // Index some sample data in local and follower cluster (remote)
     beforeEach(function () {
-      if (skipTests) {
-        this.skip();
-      }
+      if (skipTests) return;
       cy.visit(AD_URL.OVERVIEW, { timeout: 10000 });
       cy.deleteAllIndices();
       cy.deleteADSystemIndices();
@@ -210,7 +208,8 @@ context('Create remote detector workflow', () => {
       });
     });
 
-    it('Full creation - based on remote index', () => {
+    it('Full creation - based on remote index', function () {
+      if (skipTests) return;
       // Define detector step
       const remoteClusterName = Cypress.env('remoteClusterName');
 
@@ -309,7 +308,8 @@ context('Create remote detector workflow', () => {
       cy.getElementByTestId('detectorJobsHeader').should('exist');
     });
 
-    it('Full creation - based on multiple indexes', () => {
+    it('Full creation - based on multiple indexes', function () {
+      if (skipTests) return;
       const remoteClusterName = Cypress.env('remoteClusterName');
 
       // Define detector step
