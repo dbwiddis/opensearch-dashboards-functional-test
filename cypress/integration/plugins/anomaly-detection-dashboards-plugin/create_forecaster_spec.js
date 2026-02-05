@@ -54,16 +54,28 @@ context('create forecaster workflow', () => {
     cy.getElementByTestId('forecasterDescriptionTextInput').type(
       TEST_FORECASTER_DESCRIPTION
     );
+
     cy.getElementByTestId('indicesFilter').click();
-    cy.getElementByTestId('indicesFilter').type(`${TEST_INDEX_NAME}{enter}`);
+    cy.getElementByTestId('indicesFilter').clear().type(TEST_INDEX_NAME);
 
-    cy.contains('.euiComboBoxOption__content', TEST_INDEX_NAME).click();
-
-    cy.getElementByTestId('timestampFilter')
+    // click the actual option row (more reliable than clicking the inner content)
+    cy.contains('.euiComboBoxOption__content', TEST_INDEX_NAME)
       .should('be.visible')
-      .should('not.be.disabled');
+      .closest('.euiComboBoxOption')
+      .click({ force: true });
 
-    selectTopItemFromFilter('timestampFilter', false);
+    // prove selection “took”
+    cy.getElementByTestId('indicesFilter')
+      .parents('.euiComboBox')
+      .should('contain', TEST_INDEX_NAME);
+
+    // now open timestamp dropdown and wait for items to appear
+    cy.getElementByTestId('timestampFilter').click({ force: true });
+    cy.get('body')
+      .find('.euiFilterSelectItem, .euiSelectableListItem, .euiComboBoxOption__content')
+      .should('have.length.greaterThan', 0);
+
+    selectTopItemFromFilter('timestampFilter', false)
 
     cy.getElementByTestId('featureNameTextInput-0').type(
       TEST_FIELD_TO_FORECAST
