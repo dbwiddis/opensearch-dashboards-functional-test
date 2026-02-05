@@ -14,8 +14,6 @@ context('create forecaster workflow', () => {
 
   // Index some sample data first
   beforeEach(() => {
-    cy.visit(FORECAST_URL.CREATE_FORECASTER, { timeout: 10000 });
-
     cy.deleteAllIndices();
     cy.deleteForecastIndices();
 
