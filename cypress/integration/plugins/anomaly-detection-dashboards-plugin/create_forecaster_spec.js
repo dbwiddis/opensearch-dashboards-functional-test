@@ -38,23 +38,22 @@ context('create forecaster workflow', () => {
         body: data,
       }).then((resp) => {
         expect(resp.status).to.eq(200);
+      // refresh so mappings/fields are visible immediately
+        cy.request({
+          method: 'POST',
+          form: false,
+          url: 'api/console/proxy',
+          headers: {
+            'content-type': 'application/json;charset=UTF-8',
+            'osd-xsrf': true,
+          },
+          qs: {
+            path: `${TEST_INDEX_NAME}/_refresh`,
+            method: 'POST',
+          },
+        });
       });
     });    
-  });
-
-  // refresh so mappings/fields are visible immediately
-  cy.request({
-    method: 'POST',
-    form: false,
-    url: 'api/console/proxy',
-    headers: {
-      'content-type': 'application/json;charset=UTF-8',
-      'osd-xsrf': true,
-    },
-    qs: {
-      path: `${TEST_INDEX_NAME}/_refresh`,
-      method: 'POST',
-    },
   });
 
   // Clean up created resources
