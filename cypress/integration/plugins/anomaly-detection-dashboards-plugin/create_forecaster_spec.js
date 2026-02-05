@@ -14,43 +14,12 @@ context('create forecaster workflow', () => {
 
   // Index some sample data first
   beforeEach(() => {
-    // without initial page load, the test can fail with "RequestError: Error: connect ECONNREFUSED 127.0.0.1:5601"
-    // in later setup during a `before each` hook
     cy.visit(FORECAST_URL.CREATE_FORECASTER, { timeout: 10000 });
 
     cy.deleteAllIndices();
     cy.deleteForecastIndices();
-    
-    // Create index with explicit mapping for timestamp field
-    cy.request({
-      method: 'POST',
-      form: false,
-      url: 'api/console/proxy',
-      headers: {
-        'content-type': 'application/json;charset=UTF-8',
-        'osd-xsrf': true,
-      },
-      qs: {
-        path: `${TEST_INDEX_NAME}`,
-        method: 'PUT',
-      },
-      body: JSON.stringify({
-        mappings: {
-          properties: {
-            timestamp: { type: 'date', format: 'yyyy-MM-dd' },
-            value: { type: 'integer' }
-          }
-        }
-      }),
-    }).then((response) => {
-      expect(response.status).to.eq(200);
-    });
 
-    // Wait for index to be ready
-    cy.wait(1000);
-
-    // reuse AD sample data
-    // Loads a text file containing sample test data from cypress/fixtures/[AD_FIXTURE_BASE_PATH]/sample_test_data.txt
+    // reuse AD sample data (same approach as create_detector_spec.js)
     cy.fixture(AD_FIXTURE_BASE_PATH + 'sample_test_data.txt').then((data) => {
       cy.request({
         method: 'POST',
