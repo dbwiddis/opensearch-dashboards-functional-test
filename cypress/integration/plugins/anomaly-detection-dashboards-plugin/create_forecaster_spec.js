@@ -65,8 +65,6 @@ context('create forecaster workflow', () => {
 
     selectTopItemFromFilter('timestampFilter', false);
 
-    selectTopItemFromFilter('timestampFilter', false);
-
     cy.getElementByTestId('featureNameTextInput-0').type(
       TEST_FIELD_TO_FORECAST
     );
