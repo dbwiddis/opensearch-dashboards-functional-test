@@ -36,24 +36,8 @@ context('create forecaster workflow', () => {
           method: 'POST',
         },
         body: data,
-      }).then((resp) => {
-        expect(resp.status).to.eq(200);
-      // refresh so mappings/fields are visible immediately
-        cy.request({
-          method: 'POST',
-          form: false,
-          url: 'api/console/proxy',
-          headers: {
-            'content-type': 'application/json;charset=UTF-8',
-            'osd-xsrf': true,
-          },
-          qs: {
-            path: `${TEST_INDEX_NAME}/_refresh`,
-            method: 'POST',
-          },
-        });
       });
-    });    
+    });
   });
 
   // Clean up created resources
@@ -71,7 +55,7 @@ context('create forecaster workflow', () => {
       TEST_FORECASTER_DESCRIPTION
     );
     cy.getElementByTestId('indicesFilter').click();
-    cy.getElementByTestId('indicesFilter').type(TEST_INDEX_NAME);
+    cy.getElementByTestId('indicesFilter').type(`${TEST_INDEX_NAME}{enter}`);
 
     // pick the real dropdown option
     cy.contains('.euiComboBoxOption__content', TEST_INDEX_NAME).click();
