@@ -30,7 +30,7 @@ context('create forecaster workflow', () => {
           'osd-xsrf': true,
         },
         qs: {
-          path: `${TEST_INDEX_NAME}/_bulk`,
+          path: `${TEST_INDEX_NAME}/_bulk?refresh=true`,
           method: 'POST',
         },
         body: data,
@@ -53,6 +53,10 @@ context('create forecaster workflow', () => {
       TEST_FORECASTER_DESCRIPTION
     );
     cy.getElementByTestId('indicesFilter').type(`${TEST_INDEX_NAME}{enter}`);
+    
+    // Wait for mappings to be fetched after index selection
+    cy.wait(2000);
+    
     selectTopItemFromFilter('timestampFilter', false);
 
     cy.getElementByTestId('featureNameTextInput-0').type(
